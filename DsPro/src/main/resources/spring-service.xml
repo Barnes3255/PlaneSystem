@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="ds.service"/>
+    <bean id="userServiceImpl" class="ds.service.UserServiceImpl">
+        <property name="userMapper" ref="userMapper"/>
+    </bean>
+
+    <bean id="planeServiceImpl" class="ds.service.PlaneServiceImpl">
+        <property name="planeMapper" ref="planeMapper"/>
+    </bean>
+
+    <bean id="cityServiceImpl" class="ds.service.CityServiceImpl">
+        <property name="cityMapper" ref="cityMapper"/>
+    </bean>
+
+    <bean id="ticketServiceImpl" class="ds.service.TicketServiceImpl">
+        <property name="ticketMapper" ref="ticketMapper"/>
+    </bean>
+
+    <bean id="dealServiceImpl" class="ds.service.DealServiceImpl">
+        <property name="dealMapper" ref="dealMapper"/>
+    </bean>
+
+    <bean id="passengerServiceImpl" class="ds.service.PassengerServiceImpl">
+        <property name="passengerMapper" ref="passengerMapper"/>
+    </bean>
+
+    <bean id="dealRecordServiceImpl" class="ds.service.DealRecordServiceImpl">
+        <property name="dealRecordMapper" ref="dealRecordMapper"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+</beans>

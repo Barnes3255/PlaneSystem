@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ds.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ds.mapper.TicketMapper">
+
+    <select id="getTicketList" parameterType="map" resultType="ds.pojo.Ticket">
+        select * from planes_system.Ticket
+
+        <where>
+
+            <if test="plane_id != null">
+                and plane_id = #{plane_id}
+            </if>
+
+            <if test="ticket_id != null">
+                and ticket_id = #{ticket_id}
+            </if>
+
+        </where>
+        order by coun asc
+
+    </select>
+
+    <update id="updateTicketMinus1" parameterType="map">
+        update planes_system.ticket
+        set number_rest=number_rest-1
+        where ticket_id = #{ticket_id}
+    </update>
+
+    <update id="updateTicketAdd1" parameterType="map">
+        update planes_system.ticket
+        set number_rest=number_rest+1
+        where ticket_id = #{ticket_id}
+    </update>
+
+    <insert id="addTicket" parameterType="ds.pojo.Ticket">
+        insert into planes_system.ticket(coun,plane_id,number_rest,number_all) values(#{coun},#{plane_id},#{number_rest},#{number_all})
+    </insert>
+
+    <delete id="deleteTicket" parameterType="int">
+        delete from planes_system.ticket where plane_id = #{plane_id}
+    </delete>
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ds.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ds.mapper.PassengerMapper">
+
+    <select id="getPassengerList" parameterType="map" resultType="ds.pojo.Passenger">
+
+        select * from planes_system.passenger
+
+        <where>
+
+            <if test="id_number != null">
+                and id_number = #{id_number}
+            </if>
+
+            <if test="name != null">
+                and name = #{name}
+            </if>
+
+        </where>
+
+    </select>
+
+    <select id="getPassengerList2" parameterType="map" resultType="ds.pojo.Passenger">
+
+        select * from planes_system.user_passenger
+
+        <where>
+
+            <if test="id_number != null">
+                and id_number = #{id_number}
+            </if>
+
+            <if test="id != null">
+                and id = #{id}
+            </if>
+
+        </where>
+
+    </select>
+
+
+    <insert id="addPassenger" parameterType="ds.pojo.Passenger">
+        insert into planes_system.passenger(id_number,name,phone_number) values(#{id_number},#{name},#{phone_number})
+    </insert>
+
+    <insert id="addPassengerUser" parameterType="ds.pojo.Passenger">
+        insert into planes_system.user_passenger(id_number,id) values(#{id_number},#{id})
+    </insert>
+
+
+    <delete id="deletePassenger" parameterType="String">
+        delete from planes_system.passenger where id_number = #{id_number}
+    </delete>
+
+    <delete id="deleteUserPassenger" parameterType="map">
+        delete from planes_system.user_passenger where id_number = #{id_number} and id=#{id}
+    </delete>
+
+</mapper>

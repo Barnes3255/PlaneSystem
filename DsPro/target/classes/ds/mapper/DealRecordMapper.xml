@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ds.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ds.mapper.DealRecordMapper">
+    <select id="getDealRecordList" parameterType="map" resultType="ds.pojo.DealRecord">
+
+        select * from planes_system.deal_record
+
+        <where>
+
+            <if test="id != null">
+                and id = #{id}
+            </if>
+
+            <if test="record_id != null">
+                and record_id = #{record_id}
+            </if>
+
+        </where>
+    order by time desc
+
+    </select>
+
+
+    <insert id="addDealRecord" parameterType="ds.pojo.DealRecord">
+        insert into planes_system.deal_record(id,amount,description,time) values(#{id},#{amount},#{description},#{time})
+    </insert>
+</mapper>
+

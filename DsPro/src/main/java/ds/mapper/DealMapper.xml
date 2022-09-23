@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ds.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ds.mapper.DealMapper">
+
+    <select id="getDealList" parameterType="map" resultType="ds.pojo.Deal">
+
+        select * from planes_system.deal
+
+        <where>
+
+            <if test="id != null">
+                and id = #{id}
+            </if>
+
+            <if test="deal_id != null">
+                and deal_id = #{deal_id}
+            </if>
+
+            <if test="pay != null">
+                and pay = #{pay}
+            </if>
+
+        </where>
+
+    </select>
+
+    <select id="getDealListPlus" parameterType="map" resultMap="DealTicket">
+
+        select ticket_id, deal_id, attribute, a.id_number id_number, a.price price, a.time time,name,phone_number,coun,plane.price p_price,
+               plane.plane_id pland_id,start_city,end_city,start_time,end_time,start_day,end_day,departure_airfield ,arrival_airfield,pay
+        from
+        (select ticket_id, deal_id, attribute, id_number, plane_id,price,time,coun,pay
+            from deal d natural join deal_ticket dt natural join ticket t
+        <where>
+
+            <if test="id != null">
+                and id = #{id}
+            </if>
+
+            <if test="deal_id != null">
+                and deal_id = #{deal_id}
+            </if>
+
+            <if test="pay != null">
+                and pay = #{pay}
+            </if>
+
+        </where>) a , plane ,passenger where a.plane_id=plane.plane_id and a.id_number=passenger.id_number
+        order by time desc
+
+    </select>
+
+    <resultMap id="DealTicket" type="Deal">
+        <id property="deal_id" column="deal_id"/>
+        <result property="attribute" column="attribute"></result>
+        <result property="id_number" column="id_number"></result>
+        <result property="price" column="price"></result>
+        <result property="time" column="time"></result>
+        <result property="pay" column="pay"></result>
+        <association property="passenger" javaType="Passenger">
+            <result property="id_number" column="id_number"></result>
+            <result property="name" column="name"></result>
+            <result property="phone_number" column="phone_number"></result>
+        </association>
+        <collection property="tickets" ofType="Ticket">
+            <result property="ticket_id" column="ticket_id"></result>
+            <result property="plane_id" column="plane_id"></result>
+            <result property="coun" column="coun"></result>
+            <association property="plane" javaType="Plane">
+                <result property="plane_id" column="plane_id"></result>
+                <result property="start_city" column="start_city"></result>
+                <result property="end_city" column="end_city"></result>
+                <result property="start_time" column="start_time"></result>
+                <result property="end_time" column="end_time"></result>
+                <result property="start_day" column="start_day"></result>
+                <result property="end_day" column="end_day"></result>
+                <result property="departure_airfield" column="departure_airfield"></result>
+                <result property="arrival_airfield" column="arrival_airfield"></result>
+                <result property="price" column="p_price"></result>
+            </association>
+        </collection>
+
+    </resultMap>
+
+
+    <insert id="addDeal" parameterType="ds.pojo.Deal">
+ insert into planes_system.deal(deal_id,price,attribute,id,id_number,time) values(#{deal_id},#{price},#{attribute},#{id},#{id_number},#{time})
+ </insert>
+
+    <insert id="addDealTicket" parameterType="ds.pojo.Deal">
+        insert into planes_system.deal_ticket(deal_id,ticket_id) values(#{deal_id},#{ticket_id})
+    </insert>
+
+    <delete id="deleteDealTicket" parameterType="map">
+        delete from planes_system.deal_ticket
+        <where>
+
+        <if test="ticket_id != null">
+            and ticket_id = #{ticket_id}
+        </if>
+
+        <if test="deal_id != null">
+            and deal_id = #{deal_id}
+        </if>
+
+    </where>
+    </delete>
+
+    <update id="updateDeal" parameterType="map">
+        update planes_system.deal
+        <set>
+            <if test="price != null">price=#{price},</if>
+            <if test="attribute != null">attribute=#{attribute}</if>
+            <if test="pay != null">pay=#{pay}</if>
+        </set>
+        where deal_id = #{deal_id}
+    </update>
+
+
+</mapper>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ds.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ds.mapper.PlaneMapper">
+
+    <select id="getPlaneList" parameterType="map" resultType="ds.pojo.Plane">
+        select * from planes_system.plane
+
+        <where>
+
+            <if test="plane_id != null">
+                and plane_id = #{plane_id}
+            </if>
+
+            <if test="start_city != null">
+                and start_city = #{start_city}
+            </if>
+
+            <if test="end_city != null">
+                and end_city = #{end_city}
+            </if>
+
+            <if test="start_day != null">
+                and start_day = #{start_day}
+            </if>
+            <if test="end_day != null">
+                and end_day = #{end_day}
+            </if>
+            <if test="departure_airfield != null">
+                and departure_airfield = #{departure_airfield}
+            </if>
+            <if test="arrival_airfield != null">
+                and arrival_airfield = #{arrival_airfield}
+            </if>
+            <if test="start_time != null">
+                and start_time = #{start_time}
+            </if>
+            <if test="end_time != null">
+                and end_time = #{end_time}
+            </if>
+            <if test="price != null">
+                and price = #{price}
+            </if>
+            <if test="exist != null">
+                and exist = #{exist}
+            </if>
+
+        </where>
+        order by start_time asc
+
+    </select>
+
+    <select id="getPlaneListWithLowestPrice" parameterType="map" resultType="ds.pojo.Plane">
+        select e.plane_id,e.start_time,e.end_time,e.start_city,e.end_city,e.start_day,e.end_day,
+               e.departure_airfield,e.arrival_airfield,lowest_price
+        from
+             (select a.plane_id,min(price*coun) lowest_price
+              from (
+              select * from planes_system.plane where
+                start_city = #{start_city}
+                and end_city = #{end_city}
+                and start_day = #{start_day}) a,
+                      planes_system.ticket b
+                  where a.plane_id =b.plane_id
+              group by a.plane_id) d,planes_system.plane e
+        where d.plane_id=e.plane_id and e.exist='YES'
+        order by start_time asc
+    </select>
+
+    <insert id="addPlane" parameterType="ds.pojo.Plane">
+        insert into planes_system.plane(start_city,end_city,start_day,end_day,start_time,end_time,departure_airfield,arrival_airfield,price) values(#{start_city},#{end_city},#{start_day},#{end_day},#{start_time},#{end_time},#{departure_airfield},#{arrival_airfield},#{price})
+    </insert>
+
+    <delete id="deletePlane" parameterType="int">
+        delete from planes_system.plane where plane_id = #{plane_id}
+    </delete>
+
+    <update id="updatePlane" parameterType="map">
+        update plane
+        <set>
+            <if test="exist != null">exist=#{exist},</if>
+            <if test="price != null">price=#{price}</if>
+        </set>
+        where plane_id = #{plane_id}
+    </update>
+
+
+    <select id="getCancelPlane" parameterType="int" resultMap="CancelPlane">
+
+    select ticket_id,  a.price plane_price,  coun, d.deal_id deal_id, d.price deal_price, attribute, id, id_number, time
+    from (select * from plane natural join ticket natural join deal_ticket) a, deal d
+    where plane_id=#{plane_id} and a.deal_id=d.deal_id and pay='YES'
+
+    </select>
+
+    <resultMap id="CancelPlane" type="Plane">
+        <result property="price" column="plane_price"></result>
+        <collection property="tickets" ofType="Ticket">
+            <result property="ticket_id" column="ticket_id"></result>
+            <result property="coun" column="coun"></result>
+            <collection property="deals" ofType="Deal">
+                <result property="deal_id" column="deal_id"></result>
+                <result property="price" column="deal_price"></result>
+                <result property="attribute" column="attribute"></result>
+                <result property="id" column="id"></result>
+                <result property="id_number" column="id_number"></result>
+                <result property="time" column="time"></result>
+            </collection>
+        </collection>
+
+    </resultMap>
+
+    <insert id="addCancelNotice" parameterType="map">
+        insert into notice(id,plane_id,notice_time) values(#{id},#{plane_id},#{notice_time})
+    </insert>
+
+    <select id="getNoticeList" parameterType="int" resultType="ds.pojo.Notice">
+    select * from notice where id=#{id} order by notice_time desc
+    </select>
+
+
+
+
+
+
+
+</mapper>
